@@ -15,6 +15,13 @@ let gravity = 0.1;
 let jump = -3;
 
 function logToGameConsole(msg) {
+    // Команда /small
+    if (msg.trim() === '/small') {
+        birdRadius = 12;
+        gameConsoleLog.push('Small mode: bird is now smaller!');
+        if (gameConsoleLog.length > 8) gameConsoleLog.shift();
+        return;
+    }
     // Команда /inverse
     if (msg.trim() === '/inverse') {
         gravity = -0.1;
@@ -46,17 +53,18 @@ function logToGameConsole(msg) {
     }
     // Команда /normal
     if (msg.trim() === '/normal') {
-        pipeGap = 300;
-        pipeInterval = 90;
-        easyMode = false;
-        customRedMode = false;
-        pipeColor = '#228B22';
-        backgroundColor = '#87CEEB';
-        gravity = 0.1;
-        jump = -3;
-        gameConsoleLog.push('Normal mode enabled: pipes and gaps are back to default!');
-        if (gameConsoleLog.length > 8) gameConsoleLog.shift();
-        return;
+    pipeGap = 300;
+    pipeInterval = 90;
+    easyMode = false;
+    customRedMode = false;
+    pipeColor = '#228B22';
+    backgroundColor = '#87CEEB';
+    gravity = 0.1;
+    jump = -3;
+    birdRadius = 20;
+    gameConsoleLog.push('Normal mode enabled: pipes, gaps and bird size are back to default!');
+    if (gameConsoleLog.length > 8) gameConsoleLog.shift();
+    return;
     }
     // Команда /score
     if (msg.startsWith('/score ')) {
@@ -86,7 +94,7 @@ let birdY = canvas.height / 2;
 let birdVelocity = 0;
 // gravity и jump объявлены выше как let для смены режима
 const birdX = 60;
-const birdRadius = 20;
+let birdRadius = 20;
 let pipes = [];
 let frame = 0;
 let score = 0;
