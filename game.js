@@ -423,22 +423,42 @@ document.addEventListener('keyup', function(e) {
         e.preventDefault();
     }
 });
-// Обработка клика по canvas для сброса high score (добавляется один раз вне gameLoop)
-canvas.addEventListener('click', function(e) {
-    if (!gameOver) return;
-    const btnW = 220;
-    const btnH = 40;
-    const btnX = (canvas.width - btnW) / 2;
-    const btnY = canvas.height - btnH - 30;
-    // Получаем координаты клика относительно canvas
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    // Проверяем, попал ли клик в область кнопки
-    if (x >= btnX && x <= btnX + btnW && y >= btnY && y <= btnY + btnH) {
-        localStorage.setItem('flappyHighScore', 0);
-        highScore = 0;
+// Универсальный обработчик для клика и тапа
+function handleCanvasInput(e) {
+    let x, y;
+    if (e.touches && e.touches.length > 0) {
+        // touch
+        const rect = canvas.getBoundingClientRect();
+        x = e.touches[0].clientX - rect.left;
+        y = e.touches[0].clientY - rect.top;
+    } else {
+        // mouse
+        const rect = canvas.getBoundingClientRect();
+        x = e.clientX - rect.left;
+        y = e.clientY - rect.top;
     }
+    if (gameOver) {
+        // Проверка на кнопку Reset
+        const btnW = 220;
+        const btnH = 40;
+        const btnX = (canvas.width - btnW) / 2;
+        const btnY = canvas.height - btnH - 30;
+        if (x >= btnX && x <= btnX + btnW && y >= btnY && y <= btnY + btnH) {
+            localStorage.setItem('flappyHighScore', 0);
+            highScore = 0;
+            resetGame();
+            return;
+        }
+        // Если не по кнопке — просто рестарт
+        resetGame();
+    } else {
+        birdVelocity = jump;
+    }
+}
+canvas.addEventListener('click', handleCanvasInput);
+canvas.addEventListener('touchstart', function(e) {
+    e.preventDefault();
+    handleCanvasInput(e);
 });
 }
 
@@ -451,5 +471,7 @@ document.addEventListener('keydown', function(e) {
         }
     }
 });
+
+// Управление для телефона: прыжок по тапу/клику
 
 gameLoop();
